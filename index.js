@@ -1,5 +1,4 @@
-
-    // --- البيانات والحالة ---
+ // --- البيانات والحالة ---
     let transactions = JSON.parse(localStorage.getItem('fuel_data')) || [];
     let stats = { totalLiters: 0, totalRevenue: 0 };
     let darkMode = true;
