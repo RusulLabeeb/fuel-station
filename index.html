@@ -276,9 +276,28 @@
             cursor: pointer;
             font-size: 16px;
         }
+           .main-add-btn1 {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            background: rgb(217, 178, 63);
+            margin-top: 12px;
+            border-radius: 22px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4);
+            cursor: pointer;
+            font-size: 16px;
+        }
 
         .plus-box {
             background: rgba(255, 255, 255, 0.2);
+            color: white;
             width: 22px;
             height: 22px;
             border-radius: 6px;
@@ -286,6 +305,7 @@
             align-items: center;
             justify-content: center;
         }
+
     </style>
 </head>
 
@@ -350,6 +370,16 @@
                     <span class="plus-box">+</span>
                     New Entry
                 </button>
+               <!-- .axml -->
+<button class="main-add-btn1"
+    a:if="{{canIUseAuthButton}}" 
+    open-type="getAuthorize" 
+    onGetAuthorize="onGetAuthorize" 
+    onError="onAuthError" 
+    scope='userInfo'>
+    <span class="plus-box" onclick="tradePay"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z"/></svg></span>
+Pay With SuperQi
+</button>
             </footer>
         </div>
     </div>
@@ -485,6 +515,29 @@
         function copyAuthCode() {
             navigator.clipboard.writeText(authCode);
         }
+// .js 
+
+my.tradePay({
+  paymentUrl: "https://www.wallet.com/cashier?orderId=xxxxxxx", // get the redirectUrl from the server first
+  success: (res) => {
+    my.alert({
+      content: JSON.stringify(res),
+    });
+  },
+  fail: (res) => {
+    my.alert({
+      content: JSON.stringify(res),
+    });
+  }
+});
+
+
+
+
+
+
+
+
 
         // --- الوضع الليلي ---
         function toggleDarkMode() {
