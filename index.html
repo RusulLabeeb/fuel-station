@@ -474,6 +474,8 @@ Pay With SuperQi
         // --- وظائف المصادقة (SuperQi) ---
         var authCode = '';
 
+         var authCode = '';
+
         function authenticate() {
             my.getAuthCode({
                 scopes: ['auth_base', 'USER_ID'],
@@ -515,10 +517,8 @@ Pay With SuperQi
         function copyAuthCode() {
             navigator.clipboard.writeText(authCode);
         }
-// .js 
 
-
-        function pay() {
+function pay() {
             fetch('https://its.mouamle.space/api/payment', {
                 method: 'POST',
                 headers: {
@@ -541,28 +541,9 @@ Pay With SuperQi
             });
         }
 
-my.tradePay({
-  paymentUrl: "https://www.wallet.com/cashier?orderId=xxxxxxx", // get the redirectUrl from the server first
-  success: (res) => {
-    my.alert({
-      content: JSON.stringify(res),
-    });
-  },
-  fail: (res) => {
-    my.alert({
-      content: JSON.stringify(res),
-    });
-  }
-});
-
-
-
-
-
-
-
-
-
+        function copyAuthCode() {
+            navigator.clipboard.writeText(authCode);
+        }
         // --- الوضع الليلي ---
         function toggleDarkMode() {
             const frame = document.querySelector('.mobile-frame');
