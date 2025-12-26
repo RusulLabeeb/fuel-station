@@ -276,7 +276,8 @@
             cursor: pointer;
             font-size: 16px;
         }
-           .main-add-btn1 {
+
+        .main-add-btn1 {
             width: 100%;
             background: var(--primary);
             color: white;
@@ -305,7 +306,6 @@
             align-items: center;
             justify-content: center;
         }
-
     </style>
 </head>
 
@@ -370,100 +370,111 @@
                     <span class="plus-box">+</span>
                     New Entry
                 </button>
-               <!-- .axml -->
-<button class="main-add-btn1"
-    a:if="{{canIUseAuthButton}}" 
-    open-type="getAuthorize" 
-    onGetAuthorize="onGetAuthorize" 
-    onError="onAuthError" 
-    scope='userInfo'>
-    <span class="plus-box" onclick="pay"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z"/></svg></span>
-Pay With SuperQi
-</button>
+                <!-- .axml -->
+                <button class="main-add-btn1" a:if="{{canIUseAuthButton}}" open-type="getAuthorize"
+                    onGetAuthorize="onGetAuthorize" onError="onAuthError" scope='userInfo'>
+                    <span class="plus-box" onclick="pay"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                            viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                            <path
+                                d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z" />
+                        </svg></span>
+                    Pay With SuperQi
+                </button>
             </footer>
         </div>
     </div>
 
     <script>
-        // --- البيانات والحالة ---
+        // ---------------------------
+        // DATA & STATE
+        // ---------------------------
         let transactions = JSON.parse(localStorage.getItem('fuel_data')) || [];
         let stats = { totalLiters: 0, totalRevenue: 0 };
         let darkMode = true;
-        const prices = { 'Premium': 650, 'Regular': 450, 'Diesel': 400 };
-        const goals = { liters: 100, revenue: 100000 };
 
-        // --- عناصر الواجهة ---
+        const prices = {
+            Premium: 650,
+            Regular: 450,
+            Diesel: 400
+        };
+
+        const goals = {
+            liters: 100,
+            revenue: 100000
+        };
+
+        // ---------------------------
+        // UI ELEMENTS
+        // ---------------------------
         const scrollBox = document.querySelector('.scroll-box');
         const literValue = document.querySelector('.stat-circle strong');
         const revenueValue = document.querySelector('.revenue strong');
         const authCodeSpan = document.getElementById('authCode');
 
-        // --- وظائف التحديث ---
+        // ---------------------------
+        // UI UPDATE
+        // ---------------------------
         function updateUI() {
-            // حساب الإحصائيات
-            stats.totalLiters = transactions.reduce((sum, t) => sum + t.liters, 0);
-            stats.totalRevenue = transactions.reduce((sum, t) => sum + t.totalCost, 0);
+            stats.totalLiters = transactions.reduce((s, t) => s + t.liters, 0);
+            stats.totalRevenue = transactions.reduce((s, t) => s + t.totalCost, 0);
 
-            // تحديث النصوص
             literValue.innerText = stats.totalLiters.toFixed(1);
             revenueValue.innerText = stats.totalRevenue.toLocaleString();
 
-            // تحديث الدوائر (SVG)
             const literPercent = Math.min((stats.totalLiters / goals.liters) * 100, 100);
             const revenuePercent = Math.min((stats.totalRevenue / goals.revenue) * 100, 100);
 
             document.querySelector('.stat-circle .circle').style.strokeDasharray = `${literPercent}, 100`;
             document.querySelector('.revenue .circle').style.strokeDasharray = `${revenuePercent}, 100`;
 
-            // تحديث القائمة
             renderTransactions();
-
-            // حفظ البيانات
             localStorage.setItem('fuel_data', JSON.stringify(transactions));
         }
 
         function renderTransactions() {
-            if (transactions.length === 0) {
-                scrollBox.innerHTML = '<div class="empty-msg">No sales recorded yet. 🚀</div>';
+            if (!transactions.length) {
+                scrollBox.innerHTML = '<div class="empty-msg">No sales recorded yet 🚀</div>';
                 return;
             }
 
             scrollBox.innerHTML = transactions.map(t => `
-                <div class="item-card">
-                    <div class="item-icon" style="color: ${t.type === 'Premium' ? '#f97316' : '#3b82f6'}">⛽</div>
-                    <div class="item-data">
-                        <strong>${t.customerName}</strong>
-                        <span>${t.type} • ${t.liters}L • ${t.time}</span>
-                    </div>
-                    <div class="item-price">
-                        <p>${t.totalCost.toLocaleString()}</p>
-                        <button class="delete-btn" onclick="deleteTransaction(${t.id})">Delete</button>
-                    </div>
+            <div class="item-card">
+                <div class="item-icon">⛽</div>
+                <div class="item-data">
+                    <strong>${t.customerName}</strong>
+                    <span>${t.type} • ${t.liters}L • ${t.time}</span>
                 </div>
-            `).join('');
+                <div class="item-price">
+                    <p>${t.totalCost.toLocaleString()}</p>
+                    <button class="delete-btn" onclick="deleteTransaction(${t.id})">Delete</button>
+                </div>
+            </div>
+        `).join('');
         }
 
-        // --- العمليات (Add / Delete) ---
+        // ---------------------------
+        // TRANSACTIONS
+        // ---------------------------
         function addTransaction() {
-            // هنا يمكنك إظهار Modal حقيقي أو استخدام prompt للتبسيط في هذا المثال
             const name = prompt("Customer Name:", "General Customer");
             const liters = parseFloat(prompt("Quantity (Liters):", "0"));
             const type = prompt("Type (Premium, Regular, Diesel):", "Premium");
 
-            if (liters > 0 && prices[type]) {
-                const newItem = {
-                    id: Date.now(),
-                    customerName: name || "General Customer",
-                    type: type,
-                    liters: liters,
-                    totalCost: liters * prices[type],
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                };
-                transactions.unshift(newItem);
-                updateUI();
-            } else {
-                alert("Invalid input!");
+            if (!prices[type] || liters <= 0) {
+                alert("Invalid input");
+                return;
             }
+
+            transactions.unshift({
+                id: Date.now(),
+                customerName: name || "General Customer",
+                type,
+                liters,
+                totalCost: liters * prices[type],
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+
+            updateUI();
         }
 
         function deleteTransaction(id) {
@@ -471,101 +482,92 @@ Pay With SuperQi
             updateUI();
         }
 
-        // --- وظائف المصادقة (SuperQi) ---
+        // ---------------------------
+        // 🔐 AUTH & PAYMENT (YOUR LOGIC)
+        // ---------------------------
         var authCode = '';
-
-         var authCode = '';
+        var token = '';
 
         function authenticate() {
             my.getAuthCode({
                 scopes: ['auth_base', 'USER_ID'],
                 success: (res) => {
                     authCode = res.authCode;
-                    document.getElementById('authCode').textContent = authCode;
+                    authCodeSpan.textContent = authCode;
 
                     fetch('https://its.mouamle.space/api/auth-with-superQi', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            token: authCode
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: authCode })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            token = data.token;
+                            my.alert({ content: "Login successful" });
                         })
-                    }).then(res => res.json()).then(data => {
-                        my.alert({
-                            content: "Login successful",
+                        .catch(err => {
+                            my.alert({ content: "Auth error" });
                         });
-                    }).catch(err => {
-                        let errorDetails = '';
-                        if (err && typeof err === 'object') {
-                            errorDetails = JSON.stringify(err, null, 2);
-                        } else {
-                            errorDetails = String(err);
-                        }
-                        my.alert({
-                            content: "Error: " + errorDetails,
-                        });
-                    });
                 },
                 fail: (res) => {
-                    console.log(res.authErrorScopes)
-                },
+                    console.log(res);
+                }
             });
-
         }
 
-        function copyAuthCode() {
-            navigator.clipboard.writeText(authCode);
-        }
+        function pay() {
+            if (!token) {
+                my.alert({ content: "Please login first" });
+                return;
+            }
 
-function pay() {
             fetch('https://its.mouamle.space/api/payment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
-                },
-            }).then(res => res.json()).then(data => {
-                my.tradePay({
-                    paymentUrl: data.url,
-                    success: (res) => {
-                        my.alert({
-                            content: "Payment successful",
-                        });
-                    },
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    my.tradePay({
+                        paymentUrl: data.url,
+                        success: () => {
+                            my.alert({ content: "Payment successful" });
+                        }
+                    });
+                })
+                .catch(() => {
+                    my.alert({ content: "Payment failed" });
                 });
-            }).catch(err => {
-                my.alert({
-                    content: "Payment failed",
-                });
-            });
         }
 
         function copyAuthCode() {
             navigator.clipboard.writeText(authCode);
         }
-        // --- الوضع الليلي ---
+
+        // ---------------------------
+        // DARK MODE
+        // ---------------------------
         function toggleDarkMode() {
             const frame = document.querySelector('.mobile-frame');
             darkMode = !darkMode;
-            if (darkMode) {
-                frame.style.background = "#0c0d10";
-                frame.style.color = "white";
-            } else {
-                frame.style.background = "#f5f7fa";
-                frame.style.color = "#111";
-            }
+            frame.style.background = darkMode ? "#0c0d10" : "#f5f7fa";
+            frame.style.color = darkMode ? "white" : "#111";
         }
 
-        // --- تشغيل عند التحميل ---
+        // ---------------------------
+        // EVENTS
+        // ---------------------------
         document.querySelector('.main-add-btn').onclick = addTransaction;
         document.querySelector('.login-btn').onclick = authenticate;
         document.querySelector('.copy-btn').onclick = copyAuthCode;
+        document.querySelector('.main-add-btn1').onclick = pay;
         document.querySelector('.top-bar button').onclick = toggleDarkMode;
 
-        // التشغيل الأولي
         updateUI();
     </script>
+
 </body>
 
 </html>
