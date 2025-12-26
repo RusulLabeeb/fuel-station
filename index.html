@@ -377,7 +377,7 @@
     onGetAuthorize="onGetAuthorize" 
     onError="onAuthError" 
     scope='userInfo'>
-    <span class="plus-box" onclick="tradePay"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z"/></svg></span>
+    <span class="plus-box" onclick="pay"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v240H160v240h400v80H160Zm0-480h640v-80H160v80ZM760-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM160-240v-480 480Z"/></svg></span>
 Pay With SuperQi
 </button>
             </footer>
@@ -516,6 +516,30 @@ Pay With SuperQi
             navigator.clipboard.writeText(authCode);
         }
 // .js 
+
+
+        function pay() {
+            fetch('https://its.mouamle.space/api/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+            }).then(res => res.json()).then(data => {
+                my.tradePay({
+                    paymentUrl: data.url,
+                    success: (res) => {
+                        my.alert({
+                            content: "Payment successful",
+                        });
+                    },
+                });
+            }).catch(err => {
+                my.alert({
+                    content: "Payment failed",
+                });
+            });
+        }
 
 my.tradePay({
   paymentUrl: "https://www.wallet.com/cashier?orderId=xxxxxxx", // get the redirectUrl from the server first
