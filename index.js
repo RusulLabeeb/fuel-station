@@ -129,6 +129,7 @@ function copyAuthCode() {
     navigator.clipboard.writeText(authCode);
 }
 
+
 // --- الوضع الليلي ---
 function toggleDarkMode() {
     const frame = document.querySelector('.mobile-frame');

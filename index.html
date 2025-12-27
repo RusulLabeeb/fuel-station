@@ -148,7 +148,7 @@
         /* قسم أزرار الدخول */
         .auth-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -306,6 +306,23 @@
             align-items: center;
             justify-content: center;
         }
+        .empty-msg {
+            text-align: center;
+            color: #666;
+            margin-top: 50px;
+            font-size: 14px;
+        }
+        .scan-btn {
+            width: 100%;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -355,8 +372,9 @@
             <div class="auth-container">
                 <button class="auth-btn login-btn" onclick="authenticate()">Login to SuperQi</button>
                 <button class="auth-btn copy-btn" onclick="copyAuthCode()">Copy Auth Code</button>
-                <p class="auth-text">Auth Code: <span id="authCode">---</span></p>
+                <button class="scan-btn" onclick="scan()">Scan QR Code</button>
             </div>
+                <p class="auth-text">Auth Code: <span id="authCode">---</span></p>
 
             <section class="history-list">
                 <h3>Today's Activity</h3>
@@ -545,7 +563,14 @@
         function copyAuthCode() {
             navigator.clipboard.writeText(authCode);
         }
-
+        function scan() {
+            my.scan({
+                type: 'qr',
+                success: (res) => {
+                    my.alert({ content: `Scanned: ${res.code}` });
+                }
+            });
+        }
         // ---------------------------
         // DARK MODE
         // ---------------------------
